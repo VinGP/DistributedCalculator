@@ -1,0 +1,23 @@
+version: '3.8'
+
+
+services:
+  agent:
+    build: ./agent
+    restart: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  orchestrator:
+    build: ./orchestrator
+    ports:
+      - "80:80"
+    restart: always
+
+  web:
+    build: ./web
+    ports:
+      - "3000:3000"
+    restart: always
+
+
