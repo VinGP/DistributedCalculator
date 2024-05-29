@@ -5,7 +5,6 @@ import (
 	"github.com/ilyakaznacheev/cleanenv"
 	"github.com/joho/godotenv"
 	"log"
-	"strconv"
 	"sync"
 )
 
@@ -13,8 +12,7 @@ type Config struct {
 	Env             string `env:"ENV" env-default:"local"`
 	Version         string `env:"VERSION" env-default:"1"`
 	ComputingPower  int    `env:"COMPUTING_POWER" env-default:"2"`
-	Port            int    `env:"PORT" env-default:"8080"`
-	OrchestratorURL string
+	OrchestratorURL string `env:"API_URL" env-default:"http://localhost"`
 }
 
 var (
@@ -33,7 +31,6 @@ func Get() *Config {
 		if err != nil {
 			panic(fmt.Sprintf("Failed to get config: %s", err))
 		}
-		config.OrchestratorURL = "http://localhost:" + strconv.Itoa(config.Port)
 	})
 	return &config
 }
