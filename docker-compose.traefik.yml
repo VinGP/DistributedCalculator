@@ -19,7 +19,7 @@ services:
       - "traefik.http.routers.schedule-api.rule=Host(`calculator.vingp.dev`)"
       - "traefik.http.routers.schedule-api.entrypoints=http,https"
       - "traefik.http.routers.schedule-api.tls.certresolver=myresolver"
-      - "traefik.http.services.schedule-api.loadbalancer.server.port=3000"
+      - "traefik.http.services.schedule-api.loadbalancer.server.port=80"
 
     networks:
       - traefik
