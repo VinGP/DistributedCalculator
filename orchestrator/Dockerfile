@@ -9,6 +9,6 @@ RUN go mod download
 
 COPY . /app
 
-RUN CGO_ENABLED=0 GOOS=linux go build ./cmd/orchestrator/main.go -o /orchestrator ./cmd/orchestrator/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -o /orchestrator ./cmd/orchestrator/main.go
 
 CMD ["/orchestrator"]
