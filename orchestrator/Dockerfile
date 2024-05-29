@@ -11,4 +11,4 @@ COPY . /app
 
 RUN CGO_ENABLED=0 GOOS=linux go build -o orchestrator ./cmd/orchestrator/main.go
 
-CMD ["orchestrator"]
+CMD ["./orchestrator"]
