@@ -9,7 +9,7 @@ RUN go mod download
 
 COPY . /app
 
-RUN CGO_ENABLED=0 GOOS=linux go build ./cms/agent/main.go -o /agent
+RUN CGO_ENABLED=0 GOOS=linux go build ./cms/agent/main.go -o agent ./cmd/agent/main.go
 
 CMD ["/agent"]
 
