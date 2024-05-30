@@ -23,7 +23,8 @@ services:
       - "traefik.http.routers.calculator.entrypoints=http,https"
       - "traefik.http.routers.calculator.tls.certresolver=myresolver"
       - "traefik.http.services.calculator.loadbalancer.server.port=80"
-
+    environment:
+      ENV: "prod"
     networks:
       - traefik
     ports: !reset [ ]

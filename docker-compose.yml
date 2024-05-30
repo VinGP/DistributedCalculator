@@ -11,13 +11,15 @@ services:
   orchestrator:
     build: ./orchestrator
     ports:
-      - "80:80"
+      - "8080:8080"
     restart: always
 
   web:
     build: ./web
+    environment:
+      ENV: "local"
     ports:
-      - "3000:3000"
+      - "80:80"
     restart: always
 
 

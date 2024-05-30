@@ -5,10 +5,10 @@ WORKDIR /app
 
 COPY go.mod go.sum ./
 
-RUN go mod download
+RUN  GOPROXY=https://goproxy.cn go mod download
 
 COPY . /app
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o ./agent ./cmd/agent/main.go
+RUN CGO_ENABLED=0 GOOS=linux GOPROXY=https://goproxy.cn go build -o ./agent ./cmd/agent/main.go
 
 CMD ["./agent"]
