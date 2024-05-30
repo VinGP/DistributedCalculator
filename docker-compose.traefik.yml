@@ -3,6 +3,9 @@ version: '3.8'
 services:
   agent:
     extra_hosts: !reset [ ]
+    environment:
+      API_URL: "https://api.calculator.vingp.dev/"
+
 
   orchestrator:
     labels:
@@ -23,8 +26,7 @@ services:
       - "traefik.http.routers.calculator-web.entrypoints=http,https"
       - "traefik.http.routers.calculator-web.tls.certresolver=myresolver"
       - "traefik.http.services.calculator-web.loadbalancer.server.port=80"
-    environment:
-      ENV: "prod"
+
     networks:
       - traefik
     ports: !reset [ ]
