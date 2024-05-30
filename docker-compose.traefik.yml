@@ -4,7 +4,7 @@ services:
   agent:
     extra_hosts: !reset [ ]
     environment:
-      API_URL: "https://api.calculator.vingp.dev/"
+      API_URL: "https://api.calculator.vingp.dev"
 
 
   orchestrator:
