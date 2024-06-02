@@ -1,0 +1,184 @@
+definitions:
+  internal_api.TaskData:
+    properties:
+      arg1:
+        type: string
+      arg2:
+        type: string
+      id:
+        type: string
+      operation:
+        type: string
+      operation_time:
+        type: integer
+    type: object
+  internal_api.TaskDoneRequest:
+    properties:
+      error:
+        type: string
+      id:
+        type: string
+      result:
+        type: number
+    type: object
+  internal_api.TaskResponse:
+    properties:
+      task:
+        $ref: '#/definitions/internal_api.TaskData'
+    type: object
+  response.Response:
+    properties:
+      error:
+        type: string
+      status:
+        type: string
+    type: object
+  v1.CalculateRequest:
+    properties:
+      expression:
+        type: string
+    required:
+    - expression
+    type: object
+  v1.ExpressionData:
+    properties:
+      error:
+        type: string
+      expression:
+        type: string
+      id:
+        type: string
+      result:
+        type: string
+      status:
+        type: string
+    type: object
+  v1.ExpressionResponse:
+    properties:
+      expression:
+        $ref: '#/definitions/v1.ExpressionData'
+    type: object
+  v1.ExpressionsResponse:
+    properties:
+      expressions:
+        items:
+          $ref: '#/definitions/v1.ExpressionData'
+        type: array
+    type: object
+info:
+  contact: {}
+  description: This is a distributed arithmetic expression calculator api
+  title: Distributed calculator API
+  version: "1.0"
+paths:
+  /api/v1/calculate:
+    post:
+      consumes:
+      - application/json
+      description: отправить выражения для вычисления
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.CalculateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.ExpressionResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Send expression to calculate
+      tags:
+      - expressions
+  /api/v1/expressions:
+    get:
+      consumes:
+      - application/json
+      description: Получение всех выражений
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.ExpressionsResponse'
+      summary: Get all expressions
+      tags:
+      - expressions
+  /api/v1/expressions/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Получение выражения по id
+      parameters:
+      - description: get expression by id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.ExpressionResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get expression
+      tags:
+      - expressions
+  /internal/task:
+    get:
+      consumes:
+      - application/json
+      description: получить задачу на выполнение
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_api.TaskResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get task
+      tags:
+      - tasks
+    post:
+      consumes:
+      - application/json
+      description: отправить результат выполнения задачи
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_api.TaskDoneRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_api.TaskResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Post task
+      tags:
+      - tasks
+swagger: "2.0"

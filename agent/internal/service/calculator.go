@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"github.com/go-chi/render"
 	"github.com/vingp/DistributedCalculator/agent/config"
 	"github.com/vingp/DistributedCalculator/agent/pkg/logger/sl"
@@ -54,7 +53,7 @@ func (c *Calculator) GetTask() (TaskData, error) {
 		var td OrchestratorTaskDataResp
 
 		err := render.DecodeJSON(resp.Body, &td)
-		fmt.Println("td", td)
+		//fmt.Println("td", td)
 		if errors.Is(err, io.EOF) {
 			c.log.Error("request body is empty")
 
@@ -77,6 +76,7 @@ func (c *Calculator) GetTask() (TaskData, error) {
 }
 
 func (c *Calculator) SentDownTask(tr TaskResult) {
+	c.log.Info("calculator - SentDownTask", slog.Any("task result", tr))
 	data, err := json.Marshal(tr)
 	if err != nil {
 		c.log.Info("Error sent task res", sl.Err(err))
@@ -121,7 +121,7 @@ func (c *Calculator) Run(ctx context.Context) {
 		for {
 			select {
 			case ans := <-out:
-				fmt.Println(ans)
+				//fmt.Println(ans)
 				c.SentDownTask(ans)
 			case <-ctx.Done():
 				return
@@ -130,11 +130,11 @@ func (c *Calculator) Run(ctx context.Context) {
 
 	}()
 	//ctx, cancel := context.WithCancel(context.Background())
-	go Test(config.Get().ComputingPower, ctx, in, out)
+	go c.Test(config.Get().ComputingPower, ctx, in, out)
 	wg.Wait()
 }
 
-func Test(count int, ctx context.Context, in chan TaskData, out chan TaskResult) {
+func (c *Calculator) Test(count int, ctx context.Context, in chan TaskData, out chan TaskResult) {
 	wg := sync.WaitGroup{} // для ожидания завершения
 
 	for i := 0; i < count; i++ {
@@ -145,8 +145,8 @@ func Test(count int, ctx context.Context, in chan TaskData, out chan TaskResult)
 			for {
 				select {
 				case task := <-in:
-					fmt.Println("New task", task)
-					out <- calculate(task)
+					c.log.Info("New task", slog.Any("task", task))
+					out <- c.calculate(task)
 				case <-ctx.Done():
 					return
 				}
@@ -156,8 +156,10 @@ func Test(count int, ctx context.Context, in chan TaskData, out chan TaskResult)
 	wg.Wait()
 }
 
-func calculate(td TaskData) TaskResult {
-	fmt.Println(td)
+func (c *Calculator) calculate(td TaskData) TaskResult {
+	//fmt.Println(td)
+	c.log.Info("agent calculate new task", slog.Any("task", td))
+
 	res := TaskResult{
 		Id:     td.Id,
 		Result: 0,
@@ -195,5 +197,7 @@ func calculate(td TaskData) TaskResult {
 		res.Error = "invalid operation"
 	}
 	time.Sleep(time.Duration(td.OperationTime) * time.Millisecond)
+	c.log.Info("agent calculate res", slog.Any("task res", res), slog.Any("task", td))
+
 	return res
 }

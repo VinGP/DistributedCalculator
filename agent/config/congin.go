@@ -12,7 +12,7 @@ type Config struct {
 	Env             string `env:"ENV" env-default:"local"`
 	Version         string `env:"VERSION" env-default:"1"`
 	ComputingPower  int    `env:"COMPUTING_POWER" env-default:"2"`
-	OrchestratorURL string `env:"API_URL" env-default:"http://localhost"`
+	OrchestratorURL string `env:"API_URL" env-default:"http://localhost:8080"`
 }
 
 var (

@@ -5,11 +5,20 @@ services:
   agent:
     build: ./agent
     restart: always
+    environment:
+      API_URL: "http://localhost:8080"
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
   orchestrator:
     build: ./orchestrator
+    environment:
+      ENV: local
+      TIME_ADDITION_MS: 1000
+      TIME_SUBTRACTION_MS: 1000
+      TIME_MULTIPLICATIONS_MS: 2000
+      TIME_DIVISIONS_MS: 2000
+      TIME_POWER_MS: 3000
     ports:
       - "8080:8080"
     restart: always
@@ -17,7 +26,7 @@ services:
   web:
     build: ./web
     environment:
-      ENV: "local"
+      VITE_API_ENDPOINT: http://localhost:8080
     ports:
       - "80:80"
     restart: always

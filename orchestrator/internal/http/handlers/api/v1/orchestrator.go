@@ -2,13 +2,12 @@ package v1
 
 import (
 	"errors"
-	"fmt"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
 	"github.com/go-playground/validator/v10"
 	"github.com/vingp/DistributedCalculator/orchestrator/internal/service"
-	resp "github.com/vingp/DistributedCalculator/orchestrator/pkg/api/response"
+	"github.com/vingp/DistributedCalculator/orchestrator/pkg/api/response"
 	"github.com/vingp/DistributedCalculator/orchestrator/pkg/logger/sl"
 	"io"
 	"log/slog"
@@ -64,25 +63,49 @@ func ExpressionToExpressionData(exp service.Expression) ExpressionData {
 	return expD
 }
 
+// @Summary     Get all expressions
+// @Description Получение всех выражений
+// @Tags  	    expressions
+// @Accept      json
+// @Produce     json
+// @Success     200 {object} ExpressionsResponse
+// @Router       /api/v1/expressions [get]
 func (or *OrchestratorResource) GetExpressions(w http.ResponseWriter, r *http.Request) {
 	exps := or.expM.GetExpressions()
-	fmt.Println(exps)
+	const op = "handlers.OrchestratorResource.GetExpression"
+
+	log := or.log.With(
+		slog.String("op", op),
+		slog.String("request_id", middleware.GetReqID(r.Context())),
+	)
+	log.Debug("all expressions", slog.Any("expressions", exps))
+	//fmt.Println(exps)
 	//var respExps
 	//respExps := make([]ExpressionData, len(exps))
 	respExps := []ExpressionData{}
-	fmt.Println(respExps)
+	//fmt.Println(respExps)
 
 	for _, exp := range exps {
 		expD := ExpressionToExpressionData(exp)
 		respExps = append(respExps, expD)
 	}
 
-	fmt.Println(respExps)
+	//fmt.Println(respExps)
+	log.Debug("all ExpressionToExpressionData", slog.Any("expressions", exps))
 
 	render.JSON(w, r, ExpressionsResponse{Expressions: respExps})
 
 }
 
+// @Summary     Get expression
+// @Description Получение выражения по id
+// @Tags  	    expressions
+// @Accept      json
+// @Produce     json
+// @Failure     500 {object} response.Response
+// @Param       id  path string  true  "get expression by id"
+// @Success     200 {object} ExpressionResponse
+// @Router       /api/v1/expressions/{id} [get]
 func (or *OrchestratorResource) GetExpression(w http.ResponseWriter, r *http.Request) {
 	//const op = "handlers.OrchestratorResource.GetExpression"
 	//
@@ -90,13 +113,13 @@ func (or *OrchestratorResource) GetExpression(w http.ResponseWriter, r *http.Req
 	//	slog.String("op", op),
 	//	slog.String("request_id", middleware.GetReqID(r.Context())),
 	//)
-	//
+
 	id := chi.URLParam(r, "id")
 
 	exp, err := or.expM.GetExpressionById(id)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		render.JSON(w, r, resp.Error(err.Error()))
+		render.JSON(w, r, response.Error(err.Error()))
 		return
 	}
 
@@ -116,6 +139,15 @@ type CalculateRequest struct {
 	Expression string `json:"expression" validate:"required"`
 }
 
+// @Summary     Send expression to calculate
+// @Description отправить выражения для вычисления
+// @Tags  	    expressions
+// @Accept      json
+// @Produce     json
+// @Failure     500 {object} response.Response
+// @Param request body CalculateRequest true "request"
+// @Success     200 {object} ExpressionResponse
+// @Router       /api/v1/calculate [post]
 func (or *OrchestratorResource) PostCalculate(w http.ResponseWriter, r *http.Request) {
 	const op = "handlers.OrchestratorResource.PostCalculate"
 
@@ -130,14 +162,14 @@ func (or *OrchestratorResource) PostCalculate(w http.ResponseWriter, r *http.Req
 	if errors.Is(err, io.EOF) {
 		log.Error("request body is empty")
 		w.WriteHeader(http.StatusBadRequest)
-		render.JSON(w, r, resp.Error("empty request"))
+		render.JSON(w, r, response.Error("empty request"))
 		return
 	}
 
 	if err != nil {
 		log.Error("failed to decode request body", sl.Err(err))
 		w.WriteHeader(http.StatusBadRequest)
-		render.JSON(w, r, resp.Error("failed to decode request"))
+		render.JSON(w, r, response.Error("failed to decode request"))
 		return
 	}
 
@@ -148,7 +180,7 @@ func (or *OrchestratorResource) PostCalculate(w http.ResponseWriter, r *http.Req
 		errors.As(err, &validateErr)
 		log.Error("invalid request", sl.Err(err))
 		w.WriteHeader(http.StatusBadRequest)
-		render.JSON(w, r, resp.ValidationError(validateErr))
+		render.JSON(w, r, response.ValidationError(validateErr))
 
 		return
 	}

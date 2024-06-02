@@ -37,12 +37,6 @@ func (t *Tokenizer) Tokenize(expression string) ([]Token, error) {
 
 	matches := re.FindAllString(expression, -1)
 
-	//for i, a := range matches {
-	//	fmt.Println(i, a)
-	//}
-	//
-	//fmt.Println(matches)
-
 	for _, match := range matches {
 		token := Token{
 			Value: match,

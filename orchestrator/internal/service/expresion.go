@@ -215,7 +215,6 @@ func (e *Expression) SimplifyRPN() {
 	}
 
 	var offset int
-	fmt.Println("TasksResult1", e.TasksResult)
 
 	sort.Slice(e.TasksResult, func(i, j int) bool {
 		n := e.TasksResult[i].Id.GetParallelId()
@@ -223,12 +222,8 @@ func (e *Expression) SimplifyRPN() {
 		return n < m
 	})
 
-	fmt.Println("TasksResult", e.TasksResult)
-
 	for _, op := range e.TasksResult {
 		i := op.Id.GetParallelId()
-		//fmt.Println(i, offset)
-		//fmt.Println(op)
 		e.RPN[i-offset].Value = fmt.Sprintf("%v", op.Result)
 		e.RPN = append(e.RPN[:i-offset+1], e.RPN[i-offset+3:]...)
 		offset += 2
@@ -283,7 +278,6 @@ func (e *Expression) UpdateTasks() {
 	}
 
 	op := e.GetParallelOperations(e.RPN)
-	//fmt.Println("op", op)
 	if len(op) == 0 {
 		e.Finish(errors.New("invalid expression"))
 	}
@@ -293,7 +287,6 @@ func (e *Expression) UpdateTasks() {
 		taskId := NewTaskId(e.Id, i)
 
 		task := NewTask(taskId, v[0].Value, v[1].Value, v[2].Value, GetOperationTime(v[2].Value))
-		//fmt.Println("task", task)
 		e.taskManager.AddTask(task)
 		tasks = append(tasks, task)
 
@@ -308,16 +301,13 @@ func (e *Expression) Start() {
 }
 
 func (e *Expression) AddTaskResult(tr TaskResult) {
-	fmt.Println("AddTaskResult1")
 	if tr.Err != nil {
 		e.Finish(tr.Err)
 		return
 	}
-	fmt.Println("AddTaskResult2")
 
 	e.TasksResult = append(e.TasksResult, tr)
 	e.taskManager.CompleteTask(tr.Id, tr.Result, tr.Err)
-	fmt.Println("SimplifyRPN")
 	e.SimplifyRPN()
 }
 
@@ -363,8 +353,6 @@ func (em *ExpressionManager) AddExpression(expr string) Expression {
 }
 
 func (em *ExpressionManager) GetExpressionById(expId string) (*Expression, error) {
-	//em.mutex.Lock()
-	//defer em.mutex.Unlock()
 	exp, ok := em.expressions[expId]
 	if !ok {
 		return &Expression{}, ErrExpressionNotFound
@@ -386,14 +374,12 @@ func (em *ExpressionManager) UpdateExpressionTasks(tr TaskResult) error {
 	if err != nil {
 		return err
 	}
-
 	exp.AddTaskResult(tr)
 	em.expressions[expId] = exp
 	return nil
 }
 
 func (em *ExpressionManager) GetExpressions() []Expression {
-	fmt.Println(em.expressions)
 	exps := []Expression{}
 	for _, v := range em.expressions {
 		exps = append(exps, *v)

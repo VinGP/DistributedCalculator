@@ -46,6 +46,14 @@ type TaskResponse struct {
 	Task TaskData `json:"task"`
 }
 
+// @Summary     Get task
+// @Description получить задачу на выполнение
+// @Tags  	    tasks
+// @Accept      json
+// @Produce     json
+// @Failure     500 {object} response.Response
+// @Success     200 {object} TaskResponse
+// @Router       /internal/task [get]
 func (tr *TaskResource) GetTask(w http.ResponseWriter, r *http.Request) {
 	task, err := tr.tm.GetNewTask()
 
@@ -72,6 +80,15 @@ type TaskDoneRequest struct {
 	Error  string  `json:"error,omitempty"`
 }
 
+// @Summary     Post task
+// @Description отправить результат выполнения задачи
+// @Tags  	    tasks
+// @Accept      json
+// @Produce     json
+// @Failure     500 {object} response.Response
+// @Param request body TaskDoneRequest true "request"
+// @Success     200 {object} TaskResponse
+// @Router       /internal/task [post]
 func (tr *TaskResource) PostTask(w http.ResponseWriter, r *http.Request) {
 	const op = "internal.http.internal_api.TaskResource.PostTask"
 
@@ -123,5 +140,6 @@ func (tr *TaskResource) PostTask(w http.ResponseWriter, r *http.Request) {
 		render.JSON(w, r, resp.Error(err.Error()))
 		return
 	}
-	render.JSON(w, r, req)
+	//resp :=
+	render.JSON(w, r, make(map[string]string))
 }

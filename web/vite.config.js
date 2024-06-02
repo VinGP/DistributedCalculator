@@ -2,10 +2,8 @@ import {fileURLToPath, URL} from 'node:url'
 
 import {defineConfig, loadEnv} from 'vite'
 import vue from '@vitejs/plugin-vue'
-// import process from "eslint-plugin-vue/lib/configs/base.js";
-// import VueDevTools from 'vite-plugin-vue-devtools'
 
-// https://vitejs.dev/config/
+
 export default defineConfig(() => {
     const env = loadEnv('', process.cwd());
     console.log(env)
@@ -18,10 +16,9 @@ export default defineConfig(() => {
         },
         plugins: [
             vue(),
-            // VueDevTools(),
         ],
         define: {
-            ENV: env.ENV,
+            VITE_API_ENDPOINT: env.ENV,
         },
         optimizeDeps: {
             exclude: ['js-big-decimal']

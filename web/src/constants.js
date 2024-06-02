@@ -1,12 +1,13 @@
 const env = import.meta.env
-// console.log(env)
-// console.log(process.env.ENV)
+
 let API_URL = ""
 
-if (env.MODE === "development") {
+console.log(env.VITE_API_ENDPOINT)
+
+if (!env.VITE_API_ENDPOINT) {
     API_URL = "http://localhost:8080"
 } else {
-    API_URL = "https://api.calculator.vingp.dev"
+    API_URL = env.VITE_API_ENDPOINT
 }
 
 export {API_URL}

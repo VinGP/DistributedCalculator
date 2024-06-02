@@ -90,10 +90,6 @@ func (t *TaskManager) DeleteTask(id TaskId) {
 	delete(t.tasks, id)
 }
 
-//func (t *TaskManager) GetTasks() []Task {
-//	return t.tasks
-//}
-
 func (t *TaskManager) GetTaskById(id TaskId) (Task, error) {
 	t.mutex.Lock()
 	defer t.mutex.Unlock()
