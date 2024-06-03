@@ -43,7 +43,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.ExpressionResponse"
+                            "$ref": "#/definitions/v1.ExpressionData"
                         }
                     },
                     "500": {

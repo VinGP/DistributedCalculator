@@ -102,13 +102,14 @@ func (tr *TaskResource) PostTask(w http.ResponseWriter, r *http.Request) {
 	err := render.DecodeJSON(r.Body, &req)
 	if errors.Is(err, io.EOF) {
 		log.Error("request body is empty")
+		w.WriteHeader(http.StatusUnprocessableEntity)
 		render.JSON(w, r, resp.Error("empty request"))
 		return
 	}
 
 	if err != nil {
 		log.Error("failed to decode request body", sl.Err(err))
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusUnprocessableEntity)
 		render.JSON(w, r, resp.Error("failed to decode request"))
 		return
 	}
@@ -119,14 +120,12 @@ func (tr *TaskResource) PostTask(w http.ResponseWriter, r *http.Request) {
 		var validateErr validator.ValidationErrors
 		errors.As(err, &validateErr)
 		log.Error("invalid request", sl.Err(err))
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusUnprocessableEntity)
 		render.JSON(w, r, resp.ValidationError(validateErr))
 
 		return
 	}
-	//tr.tm.CompleteTask(req.Id, )
-	//tr.tm.CompleteTask()
-	//var err error
+
 	if req.Error != "" {
 		err = errors.New(req.Error)
 	}
@@ -140,6 +139,6 @@ func (tr *TaskResource) PostTask(w http.ResponseWriter, r *http.Request) {
 		render.JSON(w, r, resp.Error(err.Error()))
 		return
 	}
-	//resp :=
+
 	render.JSON(w, r, make(map[string]string))
 }

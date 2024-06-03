@@ -6,7 +6,7 @@ services:
     build: ./agent
     restart: always
     environment:
-      API_URL: "http://localhost:8080"
+      API_URL: "http://orchestrator:8080"
     extra_hosts:
       - "host.docker.internal:host-gateway"
 

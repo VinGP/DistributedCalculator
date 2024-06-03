@@ -146,7 +146,7 @@ type CalculateRequest struct {
 // @Produce     json
 // @Failure     500 {object} response.Response
 // @Param request body CalculateRequest true "request"
-// @Success     200 {object} ExpressionResponse
+// @Success     200 {object} ExpressionData
 // @Router       /api/v1/calculate [post]
 func (or *OrchestratorResource) PostCalculate(w http.ResponseWriter, r *http.Request) {
 	const op = "handlers.OrchestratorResource.PostCalculate"
@@ -187,5 +187,6 @@ func (or *OrchestratorResource) PostCalculate(w http.ResponseWriter, r *http.Req
 
 	exp := or.expM.AddExpression(req.Expression)
 
-	render.JSON(w, r, ExpressionResponse{Expression: ExpressionToExpressionData(exp)})
+	w.WriteHeader(http.StatusCreated)
+	render.JSON(w, r, ExpressionToExpressionData(exp))
 }
