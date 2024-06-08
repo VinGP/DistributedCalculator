@@ -112,7 +112,7 @@ onMounted(async () => {
 
 <template>
   <body>
-  <header><h1>Distributed arithmetic expression calculator</h1></header>
+  <header><h1>Distributed calculator</h1></header>
   <main>
     <div class="content">
       <div class="container">
