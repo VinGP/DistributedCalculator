@@ -1,6 +1,7 @@
 import {createRouter, createWebHistory} from 'vue-router'
 import HomePage from "@/pages/HomePage.vue";
 import TestPage from "@/pages/TestPage.vue";
+import PathNotFound from "@/pages/PathNotFound.vue";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,6 +16,11 @@ const router = createRouter({
             name: 'test',
             component: TestPage
         },
+        {
+            path: '/:pathMatch(.*)*',
+            name: "not found",
+            component: PathNotFound
+        }
     ]
 })
 
