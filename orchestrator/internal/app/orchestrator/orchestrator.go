@@ -5,6 +5,7 @@ import (
 	"github.com/vingp/DistributedCalculator/orchestrator/config"
 	"github.com/vingp/DistributedCalculator/orchestrator/internal/http/handlers"
 	"github.com/vingp/DistributedCalculator/orchestrator/internal/service"
+	"github.com/vingp/DistributedCalculator/orchestrator/internal/storage/sqlite"
 	"github.com/vingp/DistributedCalculator/orchestrator/pkg/httpserver"
 	"github.com/vingp/DistributedCalculator/orchestrator/pkg/logger"
 	"github.com/vingp/DistributedCalculator/orchestrator/pkg/logger/sl"
@@ -26,6 +27,17 @@ func Run(cfg *config.Config) {
 	)
 	log.Debug("debug messages are enabled")
 
+	storage, err := sqlite.New(cfg.StoragePath)
+	if err != nil {
+		log.Error("app - Run - sqlite.New: %w", sl.Err(err))
+	}
+	defer func(storage *sqlite.Storage) {
+		err := storage.Close()
+		if err != nil {
+			log.Error("app - Run - storage.Close: %w", sl.Err(err))
+		}
+	}(storage)
+
 	tM := service.NewTaskManager()
 	expM := service.NewExpressionManager(tM)
 
@@ -46,7 +58,7 @@ func Run(cfg *config.Config) {
 		log.Error("app - Run - httpServer.Notify: %w", sl.Err(err))
 	}
 
-	err := httpServer.Shutdown()
+	err = httpServer.Shutdown()
 	if err != nil {
 		log.Error("app - Run - httpServer.Shutdown: %w", sl.Err(err))
 	}

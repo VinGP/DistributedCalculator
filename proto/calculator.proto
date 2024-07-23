@@ -1,0 +1,36 @@
+syntax = "proto3"; // версия proto файлов
+package geometry; // название пакета
+option go_package = "github.com/VinGP/DistributedCalculator/proto";
+
+service OrchestratorService {
+  rpc GetTask (TaskRequest) returns (TaskResponse);
+  rpc SaveTaskRequest (ResultTaskRequest) returns (ResultTaskResponse);
+}
+
+message TaskRequest {
+  TaskData task = 1;
+}
+message TaskResponse {
+  string status = 1;
+}
+
+message TaskData{
+  int64 id = 1;
+  string arg1 = 2;
+  string arg2 = 3;
+  string operation = 4;
+  int64 operation_time = 5;
+}
+
+message ResultTaskRequest {
+  int64 id = 1;
+  float result = 2;
+  string error = 3;
+}
+
+message ResultTaskResponse {
+  string status = 1;
+}
+
+
+

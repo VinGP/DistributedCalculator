@@ -74,14 +74,15 @@ const sendExpression = async () => {
 
 const inputEnter = async (event) => {
   searchVal.value = event.target.value
-  if (event.key === "Enter") {
-    console.log(searchVal.value)
+  await sendExpression()
+  searchVal.value = ""
+  await getExpressions()
+  // if (event.key === "Enter") {
+  //   console.log(searchVal.value)
 
-    await sendExpression()
 
-    searchVal.value = ""
-    await getExpressions()
-  }
+
+  // }
 }
 
 const expressions = ref({})
@@ -116,7 +117,7 @@ onMounted(async () => {
   <main>
     <div class="content">
       <div class="container">
-        <input :value="searchVal" placeholder="Введите выражение" @keydown="inputEnter($event)">
+        <input :value="searchVal" placeholder="Введите выражение" @keydown.enter="inputEnter">
       </div>
     </div>
     <!--    <div class="content">-->

@@ -18,6 +18,7 @@ type Config struct {
 	TimeMultiplicationsMs int    `env:"TIME_MULTIPLICATIONS_MS" env-default:"1000"`
 	TimeDivisionsMs       int    `env:"TIME_DIVISIONS_MS" env-default:"1000"`
 	TimePowerMs           int    `env:"TIME_POWER_MS" env-default:"1000"`
+	StoragePath           string `env:"STORAGE_PATH" env-default:"./storage.db"`
 }
 
 var (
